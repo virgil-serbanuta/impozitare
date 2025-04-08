@@ -26,6 +26,8 @@ COST_CONTABIL_MICRO_ANUAL = 4000 # $E$12
 # 8690 – Alte activități referitoare la sănătatea umană.”
 CAEN_LA_ALIN_1_B = "Da"
 
+SALARIU_PENTRU_CONTRIBUTIE_VOLUNTARA_PENSIE_ANUAL = SALARIU_PENTRU_CONTRIBUTIE_VOLUNTARA_PENSIE * 12
+
 SALARIU_MINIM_BRUT = 4050 # $B$17
 SALARIU_MINIM_BRUT_ANUAL = SALARIU_MINIM_BRUT * 12 # $C$17
 
@@ -74,8 +76,8 @@ def foaie_de_calcul_pfa(venit_euro: int) -> int:
         baza_cas = PRAG_CONTRIBUTIE_12_SALARII
     else:
         baza_cas = 0
-    if baza_cas < SALARIU_PENTRU_CONTRIBUTIE_VOLUNTARA_PENSIE:
-        baza_cas = SALARIU_PENTRU_CONTRIBUTIE_VOLUNTARA_PENSIE
+    if baza_cas < SALARIU_PENTRU_CONTRIBUTIE_VOLUNTARA_PENSIE_ANUAL:
+        baza_cas = SALARIU_PENTRU_CONTRIBUTIE_VOLUNTARA_PENSIE_ANUAL
     cas = baza_cas * CONTRIBUTIE_CAS
 
     # g27
@@ -138,9 +140,15 @@ def foaie_de_calcul_micro(venit_euro: int) -> int:
         baza_cass = 0
     cass = baza_cass * CONTRIBUTIE_CASS
 
+    if SALARIU_MINIM_BRUT_ANUAL < SALARIU_PENTRU_CONTRIBUTIE_VOLUNTARA_PENSIE_ANUAL:
+        cas_voluntar = (SALARIU_PENTRU_CONTRIBUTIE_VOLUNTARA_PENSIE_ANUAL - SALARIU_MINIM_BRUT_ANUAL) * CONTRIBUTIE_CAS
+    else:
+        cas_voluntar = 0
+
+
     # AR27
     total_cheltuieli = (
-        TAXE_SALARIU_MINIM + impozit_micro + impozit_dividende + cass + COST_CONTABIL_MICRO_ANUAL
+        TAXE_SALARIU_MINIM + impozit_micro + impozit_dividende + cass + COST_CONTABIL_MICRO_ANUAL + cas_voluntar
     )
     return total_cheltuieli
 
